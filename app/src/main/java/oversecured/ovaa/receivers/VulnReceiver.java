@@ -1,4 +1,4 @@
-package oversecured.ovaa.vulns;
+package oversecured.ovaa.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

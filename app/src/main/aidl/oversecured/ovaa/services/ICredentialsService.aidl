@@ -1,4 +1,4 @@
-package oversecured.ovaa.vulns;
+package oversecured.ovaa.services;
 
 interface ICredentialsService {
     String getPassword();

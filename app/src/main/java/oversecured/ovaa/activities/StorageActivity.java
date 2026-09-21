@@ -1,4 +1,4 @@
-package oversecured.ovaa.vulns;
+package oversecured.ovaa.activities;
 
 import android.app.Activity;
 import android.content.ContentValues;

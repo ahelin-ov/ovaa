@@ -66,79 +66,79 @@
                 <action android:name="oversecured.ovaa.action.DUMP" />
             </intent-filter>
         </service>
-        <activity android:name=".vulns.CodeExecActivity" android:exported="true">
+        <activity android:name=".activities.CodeExecActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.CODE_EXEC" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.FileAccessActivity" android:exported="true">
+        <activity android:name=".activities.FileAccessActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.FILE_ACCESS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.ExfiltrationActivity" android:exported="true">
+        <activity android:name=".activities.ExfiltrationActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.EXFILTRATE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.ResultTheftActivity" android:exported="true">
+        <activity android:name=".activities.ResultTheftActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.RESULT_THEFT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.MediaTheftActivity" android:exported="true">
+        <activity android:name=".activities.MediaTheftActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.MEDIA" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.VulnerableWebViewActivity" android:exported="true">
+        <activity android:name=".activities.VulnerableWebViewActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.VULN_WEBVIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.IntentVulnActivity" android:exported="true">
+        <activity android:name=".activities.IntentVulnActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.INTENT_VULN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.WeakCryptoActivity" android:exported="true">
+        <activity android:name=".activities.WeakCryptoActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.CRYPTO" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.InsecureNetworkActivity" android:exported="true">
+        <activity android:name=".activities.InsecureNetworkActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.NETWORK" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.StorageActivity" android:exported="true">
+        <activity android:name=".activities.StorageActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.STORAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.DeviceControlActivity" android:exported="true">
+        <activity android:name=".activities.DeviceControlActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.DEVICE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.ConnectivityActivity" android:exported="true">
+        <activity android:name=".activities.ConnectivityActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.CONNECTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".vulns.DeeplinkRedirectActivity" android:exported="true">
+        <activity android:name=".activities.DeeplinkRedirectActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -146,7 +146,7 @@
                 <data android:host="redirect" android:scheme="ovaa" />
             </intent-filter>
         </activity>
-        <receiver android:name=".vulns.VulnReceiver" android:exported="true" android:protectionLevel="dangerous">
+        <receiver android:name=".receivers.VulnReceiver" android:exported="true" android:protectionLevel="dangerous">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.VULN_BROADCAST" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -156,12 +156,12 @@
                 <data android:host="6822" android:scheme="android_secret_code" />
             </intent-filter>
         </receiver>
-        <service android:name=".vulns.CredentialsService" android:exported="true">
+        <service android:name=".services.CredentialsService" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.CREDENTIALS" />
             </intent-filter>
         </service>
-        <provider android:name=".vulns.LeakyProvider" android:authorities="oversecured.ovaa.leaky_provider" android:exported="true" android:grantUriPermissions="true" />
+        <provider android:name=".providers.LeakyProvider" android:authorities="oversecured.ovaa.leaky_provider" android:exported="true" android:grantUriPermissions="true" />
         <provider android:name=".providers.TheftOverwriteProvider" android:authorities="oversecured.ovaa.theftoverwrite" android:exported="true" />
         <provider android:name=".providers.CredentialsProvider" android:authorities="oversecured.ovaa.creds_provider" android:exported="false" android:grantUriPermissions="true" />
         <provider android:name="androidx.core.content.FileProvider" android:authorities="oversecured.ovaa.fileprovider" android:exported="false" android:grantUriPermissions="true">

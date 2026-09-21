@@ -1,4 +1,4 @@
-package oversecured.ovaa.vulns;
+package oversecured.ovaa.services;
 
 import android.app.Service;
 import android.content.Intent;
