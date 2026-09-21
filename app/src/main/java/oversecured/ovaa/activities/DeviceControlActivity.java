@@ -3,7 +3,6 @@ package oversecured.ovaa.activities;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.WallpaperManager;
-import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -23,13 +22,18 @@ public class DeviceControlActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String path = getIntent().getStringExtra("path");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+        String settingKey = intent.getStringExtra("key");
+        String settingValue = intent.getStringExtra("value");
+        String phone = intent.getStringExtra("phone");
+        String packageName = intent.getStringExtra("package");
 
-        changeDeviceSettings(getIntent().getStringExtra("key"), getIntent().getStringExtra("value"));
+        changeDeviceSettings(settingKey, settingValue);
         setWallpaper(path);
         installPackage(path);
-        callPhoneNumber(getIntent().getStringExtra("phone"));
-        killBackgroundProcesses(getIntent().getStringExtra("package"));
+        callPhoneNumber(phone);
+        killBackgroundProcesses(packageName);
         playMedia(path);
         recordMicrophone();
         startLocalServer();
@@ -125,9 +129,5 @@ public class DeviceControlActivity extends Activity {
             } catch (IOException ignored) {
             }
         }).start();
-    }
-
-    private DevicePolicyManager policyManager() {
-        return (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
     }
 }

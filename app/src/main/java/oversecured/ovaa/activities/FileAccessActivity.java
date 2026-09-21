@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,20 +17,23 @@ public class FileAccessActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String path = getIntent().getStringExtra("path");
-        String outputPath = getIntent().getStringExtra("output_path");
-        String name = getIntent().getStringExtra("name");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+        String outputPath = intent.getStringExtra("output_path");
+        String name = intent.getStringExtra("name");
+        String data = intent.getStringExtra("data");
+        String token = intent.getStringExtra("token");
 
         copyToExternalStorage(path);
         copyToControlledDirectory(path, outputPath);
-        overwriteControlledPath(outputPath, getIntent().getStringExtra("data"));
+        overwriteControlledPath(outputPath, data);
         corruptFile(outputPath);
         deleteArbitraryFile(path);
         makeWorldReadable(path);
         makeWorldWritable(path);
         makeWorldReadableAndWritable(path);
         buildPathFromInput(name);
-        storeSensitiveDataOnSdCard();
+        storeSensitiveDataOnSdCard(token);
         storeNonMediaInExternalStorage();
         finish();
     }
@@ -118,10 +122,10 @@ public class FileAccessActivity extends Activity {
         }
     }
 
-    private void storeSensitiveDataOnSdCard() {
+    private void storeSensitiveDataOnSdCard(String token) {
         try {
             File file = new File(Environment.getExternalStorageDirectory(), "ovaa_session.txt");
-            FileUtils.writeStringToFile(file, "session_token=" + getIntent().getStringExtra("token"), "UTF-8");
+            FileUtils.writeStringToFile(file, "session_token=" + token, "UTF-8");
         } catch (IOException ignored) {
         }
     }

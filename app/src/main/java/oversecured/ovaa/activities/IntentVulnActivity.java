@@ -15,19 +15,31 @@ public class IntentVulnActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
 
-        redirectParcelableIntent();
-        redirectParsedUri(getIntent().getStringExtra("uri"));
-        launchConfiguredComponent();
-        startConfiguredFragment();
-        grantViaExplicitUri(getIntent().getStringExtra("grant_uri"));
+        Intent forwardIntent = intent.getParcelableExtra("forward_intent");
+        Intent notificationIntent = intent.getParcelableExtra("notification_intent");
+        Bundle extras = intent.getExtras();
+        String uri = intent.getStringExtra("uri");
+        String grantUri = intent.getStringExtra("grant_uri");
+        String packageName = intent.getStringExtra("package");
+        String className = intent.getStringExtra("class");
+        String action = intent.getStringExtra("action");
+        String fragmentClass = intent.getStringExtra("fragment");
+        String title = intent.getStringExtra("title");
+        String text = intent.getStringExtra("text");
+
+        redirectParcelableIntent(forwardIntent);
+        redirectParsedUri(uri);
+        launchConfiguredComponent(packageName, className, action, extras);
+        startConfiguredFragment(fragmentClass);
+        grantViaExplicitUri(grantUri, packageName);
         sendMutablePendingIntent();
-        notifyWithPendingIntent();
+        notifyWithPendingIntent(notificationIntent, title, text);
         finish();
     }
 
-    private void redirectParcelableIntent() {
-        Intent forward = getIntent().getParcelableExtra("forward_intent");
+    private void redirectParcelableIntent(Intent forward) {
         if (forward == null) {
             return;
         }
@@ -47,21 +59,19 @@ public class IntentVulnActivity extends Activity {
         }
     }
 
-    private void launchConfiguredComponent() {
-        String packageName = getIntent().getStringExtra("package");
-        String className = getIntent().getStringExtra("class");
-        String action = getIntent().getStringExtra("action");
+    private void launchConfiguredComponent(String packageName, String className, String action,
+            Bundle extras) {
+
         if (packageName == null || className == null) {
             return;
         }
         Intent intent = new Intent(action);
         intent.setClassName(packageName, className);
-        intent.putExtras(getIntent().getExtras());
+        intent.putExtras(extras);
         startActivity(intent);
     }
 
-    private void startConfiguredFragment() {
-        String fragmentClass = getIntent().getStringExtra("fragment");
+    private void startConfiguredFragment(String fragmentClass) {
         if (fragmentClass == null) {
             return;
         }
@@ -73,8 +83,7 @@ public class IntentVulnActivity extends Activity {
         }
     }
 
-    private void grantViaExplicitUri(String uri) {
-        String packageName = getIntent().getStringExtra("package");
+    private void grantViaExplicitUri(String uri, String packageName) {
         if (uri == null || packageName == null) {
             return;
         }
@@ -90,19 +99,18 @@ public class IntentVulnActivity extends Activity {
         sendBroadcast(carrier);
     }
 
-    private void notifyWithPendingIntent() {
+    private void notifyWithPendingIntent(Intent content, String title, String text) {
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(
                 new NotificationChannel(CHANNEL, "ovaa", NotificationManager.IMPORTANCE_DEFAULT));
 
-        Intent content = getIntent().getParcelableExtra("notification_intent");
         if (content == null) {
             content = new Intent();
         }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, content, PendingIntent.FLAG_MUTABLE);
         Notification notification = new Notification.Builder(this, CHANNEL)
-                .setContentTitle(getIntent().getStringExtra("title"))
-                .setContentText(getIntent().getStringExtra("text"))
+                .setContentTitle(title)
+                .setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentIntent(pendingIntent)
                 .build();

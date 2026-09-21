@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.net.Uri;
 import android.net.http.HttpResponseCache;
@@ -26,14 +27,18 @@ public class InsecureNetworkActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String url = getIntent().getStringExtra("url");
+        Intent intent = getIntent();
+        String url = intent.getStringExtra("url");
+        String cacheDir = intent.getStringExtra("cache_dir");
+        String header = intent.getStringExtra("header");
+        String method = intent.getStringExtra("method");
 
         trustAllCertificates();
         acceptAllHostnames();
         weakCiphers();
-        installResponseCache(getIntent().getStringExtra("cache_dir"));
+        installResponseCache(cacheDir);
         if (url != null && isAllowedHost(url)) {
-            request(url);
+            request(url, header, method);
         }
         finish();
     }
@@ -111,11 +116,11 @@ public class InsecureNetworkActivity extends Activity {
                 || url.replace("\\", "/").startsWith("https://oversecured.com");
     }
 
-    private void request(String url) {
+    private void request(String url, String header, String method) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestProperty("X-Forwarded-For", getIntent().getStringExtra("header"));
-            connection.setRequestMethod(String.valueOf(getIntent().getStringExtra("method")));
+            connection.setRequestProperty("X-Forwarded-For", header);
+            connection.setRequestMethod(String.valueOf(method));
             connection.getResponseCode();
         } catch (Exception ignored) {
         }

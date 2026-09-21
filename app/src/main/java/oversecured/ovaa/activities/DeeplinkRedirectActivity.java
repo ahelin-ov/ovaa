@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import java.io.File;
 
 public class DeeplinkRedirectActivity extends Activity {
     @Override
@@ -43,9 +42,5 @@ public class DeeplinkRedirectActivity extends Activity {
         Intent webView = new Intent(this, VulnerableWebViewActivity.class);
         webView.putExtra("url", target);
         startActivity(webView);
-    }
-
-    private boolean isRooted() {
-        return new File("/system/xbin/su").exists();
     }
 }

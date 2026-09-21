@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -31,14 +32,21 @@ public class ConnectivityActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String path = getIntent().getStringExtra("path");
-        String payload = getIntent().getStringExtra("payload");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+        String payload = intent.getStringExtra("payload");
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        String title = intent.getStringExtra("title");
+        String text = intent.getStringExtra("text");
+        int notificationId = intent.getIntExtra("id", 2);
+        int cancelId = intent.getIntExtra("cancel_id", -1);
+        boolean cancelAll = intent.getBooleanExtra("cancel_all", false);
         String secret = LoginUtils.getInstance(this).getLoginData().password;
 
         sendOverBluetooth(path, payload, secret);
-        sendOverNfc(path, payload, secret);
-        postNotification();
-        hideNotifications();
+        sendOverNfc(tag, path, payload, secret);
+        postNotification(title, text, notificationId);
+        hideNotifications(cancelId, cancelAll);
         finish();
     }
 
@@ -71,8 +79,7 @@ public class ConnectivityActivity extends Activity {
         }
     }
 
-    private void sendOverNfc(String path, String payload, String secret) {
-        Tag tag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
+    private void sendOverNfc(Tag tag, String path, String payload, String secret) {
         if (tag == null) {
             return;
         }
@@ -87,25 +94,24 @@ public class ConnectivityActivity extends Activity {
         }
     }
 
-    private void postNotification() {
+    private void postNotification(String title, String text, int notificationId) {
         NotificationManager manager = getSystemService(NotificationManager.class);
         manager.createNotificationChannel(
                 new NotificationChannel(CHANNEL, "ovaa", NotificationManager.IMPORTANCE_HIGH));
         Notification notification = new Notification.Builder(this, CHANNEL)
-                .setContentTitle(getIntent().getStringExtra("title"))
-                .setContentText(getIntent().getStringExtra("text"))
+                .setContentTitle(title)
+                .setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .build();
-        manager.notify(getIntent().getIntExtra("id", 2), notification);
+        manager.notify(notificationId, notification);
     }
 
-    private void hideNotifications() {
+    private void hideNotifications(int cancelId, boolean cancelAll) {
         NotificationManager manager = getSystemService(NotificationManager.class);
-        int id = getIntent().getIntExtra("cancel_id", -1);
-        if (id >= 0) {
-            manager.cancel(id);
+        if (cancelId >= 0) {
+            manager.cancel(cancelId);
         }
-        if (getIntent().getBooleanExtra("cancel_all", false)) {
+        if (cancelAll) {
             manager.cancelAll();
         }
     }

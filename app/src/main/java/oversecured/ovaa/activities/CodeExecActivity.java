@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -15,20 +16,27 @@ public class CodeExecActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String path = getIntent().getStringExtra("path");
-        String className = getIntent().getStringExtra("class");
-        String methodName = getIntent().getStringExtra("method");
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("path");
+        String className = intent.getStringExtra("class");
+        String methodName = intent.getStringExtra("method");
+        String argument = intent.getStringExtra("arg");
+        String fieldName = intent.getStringExtra("field");
+        String value = intent.getStringExtra("value");
+        String propertyKey = intent.getStringExtra("key");
+        String packageName = intent.getStringExtra("package");
+        String command = intent.getStringExtra("cmd");
 
         loadFromPublicDirectory();
         loadFromControlledPath(path);
         loadNativeLibrary(path);
-        callViaReflection(className, methodName, getIntent().getStringExtra("arg"));
-        setFieldViaReflection(className, getIntent().getStringExtra("field"), getIntent().getStringExtra("value"));
+        callViaReflection(className, methodName, argument);
+        setFieldViaReflection(className, fieldName, value);
         defineClass(path, className);
-        overrideSystemProperty(getIntent().getStringExtra("key"), getIntent().getStringExtra("value"));
-        loadFromPackageContext(getIntent().getStringExtra("package"));
+        overrideSystemProperty(propertyKey, value);
+        loadFromPackageContext(packageName);
         makeExecutableWorldWritable(path);
-        runCommand(getIntent().getStringExtra("cmd"));
+        runCommand(command);
         loadArbitraryClass(className);
         finish();
     }

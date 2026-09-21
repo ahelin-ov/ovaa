@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -36,17 +37,20 @@ public class VulnerableWebViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
         webView = new WebView(this);
         setContentView(webView);
 
+        String url = intent.getStringExtra("url");
+        String html = intent.getStringExtra("html");
+        String cookie = intent.getStringExtra("cookie");
+        String origin = intent.getStringExtra("origin");
+
         applyInsecureSettings();
-        setAttackerCookies(getIntent().getStringExtra("cookie"));
+        setAttackerCookies(cookie);
         interceptRequests();
         handleFileChooser();
-        grantGeolocation();
-
-        String url = getIntent().getStringExtra("url");
-        String html = getIntent().getStringExtra("html");
+        grantGeolocation(origin);
         if (url != null) {
             webView.loadUrl(url);
             webView.postUrl(url, new byte[0]);
@@ -139,8 +143,8 @@ public class VulnerableWebViewActivity extends Activity {
         });
     }
 
-    private void grantGeolocation() {
-        GeolocationPermissions.getInstance().allow("https://" + getIntent().getStringExtra("origin"));
+    private void grantGeolocation(String origin) {
+        GeolocationPermissions.getInstance().allow("https://" + origin);
     }
 
     public static class NativeBridge {

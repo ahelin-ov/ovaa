@@ -1,5 +1,6 @@
 package oversecured.ovaa.activities;
 
+import android.content.Intent;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,8 +19,9 @@ public class StorageActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String name = getIntent().getStringExtra("name");
-        String value = getIntent().getStringExtra("value");
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        String value = intent.getStringExtra("value");
 
         sqlInjection(name);
         insertAttackerData(name, value);
