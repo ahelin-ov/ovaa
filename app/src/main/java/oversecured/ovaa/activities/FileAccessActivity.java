@@ -33,7 +33,7 @@ public class FileAccessActivity extends Activity {
         makeWorldWritable(path);
         makeWorldReadableAndWritable(path);
         buildPathFromInput(name);
-        storeSensitiveDataOnSdCard(token);
+        storeSensitiveDataInExternalStorage(token);
         storeNonMediaInExternalStorage();
         finish();
     }
@@ -122,7 +122,7 @@ public class FileAccessActivity extends Activity {
         }
     }
 
-    private void storeSensitiveDataOnSdCard(String token) {
+    private void storeSensitiveDataInExternalStorage(String token) {
         try {
             File file = new File(Environment.getExternalStorageDirectory(), "ovaa_session.txt");
             FileUtils.writeStringToFile(file, "session_token=" + token, "UTF-8");

@@ -32,7 +32,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 18. Use of a very wide file sharing declaration for the `oversecured.ovaa.fileprovider` content provider in its `root` entry.
 19. Copying private files to external storage and attacker-named directories in `FileAccessActivity`, plus overwriting, corrupting and deleting an attacker-supplied path.
 20. World-readable and world-writable modes on attacker-supplied paths in `FileAccessActivity` and on executables in `CodeExecActivity`.
-21. Theft of the file behind an activity result in `ResultTheftActivity`.
+21. Theft of the file behind an activity result in `ResultTheftActivity`. Whether a third-party app can intercept the picker intent depends on the intent action, the requested MIME type and restrictions introduced in newer Android versions.
 22. An exported `LeakyProvider` returning stored credentials, opening files by unvalidated path segment and deleting by attacker-supplied selection.
 
 ### User media
@@ -79,7 +79,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 45. SQL injection in `StorageActivity` via `rawQuery`, `execSQL` and a `query` selection.
 46. Password storage in shared preferences, arbitrary preference files read and written, and world-accessible preferences in `StorageActivity`.
-47. Session data written to the SD card and non-media data written to external storage in `FileAccessActivity`.
+47. Session data and non-media data written to external storage in `FileAccessActivity`.
 
 ### Device control
 
