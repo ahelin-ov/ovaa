@@ -2,8 +2,11 @@ package oversecured.ovaa.vulns;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
@@ -16,11 +19,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import oversecured.ovaa.utils.LoginUtils;
 
@@ -67,7 +72,7 @@ public class VulnerableWebViewActivity extends Activity {
         CookieManager.getInstance().setAcceptFileSchemeCookies(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
-        webView.addJavascriptInterface(new NativeBridge(), "native");
+        webView.addJavascriptInterface(new NativeBridge(this), "native");
     }
 
     private void setAttackerCookies(String cookie) {
@@ -138,7 +143,13 @@ public class VulnerableWebViewActivity extends Activity {
         GeolocationPermissions.getInstance().allow("https://" + getIntent().getStringExtra("origin"));
     }
 
-    private class NativeBridge {
+    public static class NativeBridge {
+        private final Context context;
+
+        NativeBridge(Context context) {
+            this.context = context;
+        }
+
         @JavascriptInterface
         public String readFile(String path) {
             try {
@@ -149,8 +160,18 @@ public class VulnerableWebViewActivity extends Activity {
         }
 
         @JavascriptInterface
+        public String readMedia(String id) {
+            Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+            try (InputStream in = context.getContentResolver().openInputStream(uri)) {
+                return Base64.encodeToString(IOUtils.toByteArray(in), Base64.NO_WRAP);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+
+        @JavascriptInterface
         public String getPassword() {
-            return LoginUtils.getInstance(VulnerableWebViewActivity.this).getLoginData().password;
+            return LoginUtils.getInstance(context).getLoginData().password;
         }
     }
 }

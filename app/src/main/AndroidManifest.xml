@@ -84,6 +84,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".vulns.ResultTheftActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="oversecured.ovaa.action.RESULT_THEFT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".vulns.MediaTheftActivity" android:exported="true">
             <intent-filter>
                 <action android:name="oversecured.ovaa.action.MEDIA" />
