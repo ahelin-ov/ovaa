@@ -38,7 +38,7 @@ This section only includes the list of vulnerabilities, without a detailed descr
 ### User media
 
 23. Theft of `MediaStore` images in `MediaTheftActivity`, copied to external storage and attacker-named directories, then sent out over the network, SMS, an implicit intent, the clipboard and the activity result.
-24. Theft of an attacker-chosen image in `MediaTheftActivity`: the `media_uri` extra is the URI passed to `MediaStore.Images.Media.getBitmap`, so the caller picks which media is read, and the result is written to external storage and uploaded to the `server` extra.
+24. Theft of an attacker-chosen image in `MediaTheftActivity`: the `media_uri` extra is read via `MediaStore.Images.Media.getBitmap` and written to external storage, to the `content://` path in the `destination` extra and to the `server` extra.
 
 ### Data leakage
 
