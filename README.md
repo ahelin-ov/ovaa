@@ -37,59 +37,60 @@ This section only includes the list of vulnerabilities, without a detailed descr
 
 ### User media
 
-23. Theft of `MediaStore` images in `MediaTheftActivity`, copied to external storage, attacker-named directories and public media providers, then sent out over the network, SMS, an implicit intent, the clipboard and the activity result.
+23. Theft of `MediaStore` images in `MediaTheftActivity`, copied to external storage and attacker-named directories, then sent out over the network, SMS, an implicit intent, the clipboard and the activity result.
+24. Theft of an attacker-chosen image in `MediaTheftActivity`: the `media_uri` extra is the URI passed to `MediaStore.Images.Media.getBitmap`, so the caller picks which media is read, and the result is written to external storage and uploaded to the `server` extra.
 
 ### Data leakage
 
-24. Insecure broadcast to `MainActivity` containing credentials. The attacker can register a broadcast receiver with action `oversecured.ovaa.action.UNPROTECTED_CREDENTIALS_DATA` and obtain the user's data.
-25. Insecure activity launch in `MainActivity` with action `oversecured.ovaa.action.WEBVIEW`, containing the user's encrypted data in the query parameter `token`.
-26. Obtaining access to app logs via `InsecureLoggerService`. Leak of credentials in `LoginActivity` `Log.d("ovaa", "Processing " + loginData)`.
-27. Credentials and files sent out of `ExfiltrationActivity` via implicit activity, broadcast and service intents, the clipboard, SMS, a network upload, the logs and an attacker-controlled result intent.
-28. Files and credentials pushed over an insecure Bluetooth socket and written to an NFC tag in `ConnectivityActivity`, which also posts and hides notifications on request.
-29. `ICredentialsService`, an AIDL interface handing out the stored password, reading arbitrary files and passing the password to a caller-supplied binder.
+25. Insecure broadcast to `MainActivity` containing credentials. The attacker can register a broadcast receiver with action `oversecured.ovaa.action.UNPROTECTED_CREDENTIALS_DATA` and obtain the user's data.
+26. Insecure activity launch in `MainActivity` with action `oversecured.ovaa.action.WEBVIEW`, containing the user's encrypted data in the query parameter `token`.
+27. Obtaining access to app logs via `InsecureLoggerService`. Leak of credentials in `LoginActivity` `Log.d("ovaa", "Processing " + loginData)`.
+28. Credentials and files sent out of `ExfiltrationActivity` via implicit activity, broadcast and service intents, the clipboard, SMS, a network upload, the logs and an attacker-controlled result intent.
+29. Files and credentials pushed over an insecure Bluetooth socket and written to an NFC tag in `ConnectivityActivity`, which also posts and hides notifications on request.
+30. `ICredentialsService`, an AIDL interface handing out the stored password, reading arbitrary files and passing the password to a caller-supplied binder.
 
 ### Deserialization
 
-30. Deletion of arbitrary files via the insecure `DeleteFilesSerializable` deserialization object.
-31. Memory corruption via the `MemoryCorruptionParcelable` object.
-32. Memory corruption via the `MemoryCorruptionSerializable` object.
-33. A `readObject` in `AutoLoadSerializable` that reads and uploads a file during deserialization.
-34. Deserialization of attacker extras and intent forwarding in `VulnReceiver`, which also registers an unprotected receiver.
+31. Deletion of arbitrary files via the insecure `DeleteFilesSerializable` deserialization object.
+32. Memory corruption via the `MemoryCorruptionParcelable` object.
+33. Memory corruption via the `MemoryCorruptionSerializable` object.
+34. A `readObject` in `AutoLoadSerializable` that reads and uploads a file during deserialization.
+35. Deserialization of attacker extras and intent forwarding in `VulnReceiver`, which also registers an unprotected receiver.
 
 ### Code execution
 
-35. Arbitrary code execution in `OversecuredApplication` by launching code from third-party apps with no security checks.
-36. Arbitrary code execution via a DEX library located in a world-readable/writable directory.
-37. DEX and native library loading in `CodeExecActivity` from public directories and attacker-supplied paths, and class loading from a third-party package context.
-38. Reflection calls and field writes in `CodeExecActivity` with class, method, field and value from extras.
-39. OS command injection in `CodeExecActivity` via `Runtime.exec` and `ProcessBuilder`, and arbitrary system properties.
+36. Arbitrary code execution in `OversecuredApplication` by launching code from third-party apps with no security checks.
+37. Arbitrary code execution via a DEX library located in a world-readable/writable directory.
+38. DEX and native library loading in `CodeExecActivity` from public directories and attacker-supplied paths, and class loading from a third-party package context.
+39. Reflection calls and field writes in `CodeExecActivity` with class, method, field and value from extras.
+40. OS command injection in `CodeExecActivity` via `Runtime.exec` and `ProcessBuilder`, and arbitrary system properties.
 
 ### Cryptography
 
-40. Use of the hardcoded AES key in `WeakCrypto`.
-41. In `WeakCryptoActivity`: keys from `Random` and from attacker data, DES/RC4/ECB, MD5 and SHA-1, a KeyStore key with ECB and no user authentication, a seeded `SecureRandom`.
-42. Biometric authentication without a `CryptoObject` in `WeakCryptoActivity`.
+41. Use of the hardcoded AES key in `WeakCrypto`.
+42. In `WeakCryptoActivity`: keys from `Random` and from attacker data, DES/RC4/ECB, MD5 and SHA-1, a KeyStore key with ECB and no user authentication, a seeded `SecureRandom`.
+43. Biometric authentication without a `CryptoObject` in `WeakCryptoActivity`.
 
 ### Network
 
-43. Trust-all `X509TrustManager`, an always-true hostname verifier and null/anonymous ciphers over SSLv3 and TLSv1 in `InsecureNetworkActivity`.
-44. Bypassable host checks in `InsecureNetworkActivity` (`contains`, `endsWith`, `startsWith`, a loose regex, backslash normalisation) and an HTTP cache at an attacker-supplied path.
+44. Trust-all `X509TrustManager`, an always-true hostname verifier and null/anonymous ciphers over SSLv3 and TLSv1 in `InsecureNetworkActivity`.
+45. Bypassable host checks in `InsecureNetworkActivity` (`contains`, `endsWith`, `startsWith`, a loose regex, backslash normalisation) and an HTTP cache at an attacker-supplied path.
 
 ### Storage and databases
 
-45. SQL injection in `StorageActivity` via `rawQuery`, `execSQL` and a `query` selection.
-46. Password storage in shared preferences, arbitrary preference files read and written, and world-accessible preferences in `StorageActivity`.
-47. Session data and non-media data written to external storage in `FileAccessActivity`.
+46. SQL injection in `StorageActivity` via `rawQuery`, `execSQL` and a `query` selection.
+47. Password storage in shared preferences, arbitrary preference files read and written, and world-accessible preferences in `StorageActivity`.
+48. Session data and non-media data written to external storage in `FileAccessActivity`.
 
 ### Device control
 
-48. In `DeviceControlActivity`: writing device settings, setting the wallpaper from an attacker URI, installing an APK, placing calls, killing processes, playing attacker audio, recording the microphone.
-49. A local web server in `DeviceControlActivity` serving files by requested path.
+49. In `DeviceControlActivity`: writing device settings, setting the wallpaper from an attacker URI, installing an APK, placing calls, killing processes, playing attacker audio, recording the microphone.
+50. A local web server in `DeviceControlActivity` serving files by requested path.
 
 ### Configuration and secrets
 
-50. Hardcoded credentials to a dev environment endpoint in the `test_url` entry of `strings.xml`.
-51. Manifest issues: `debuggable`, `allowBackup` and `usesCleartextTraffic` all true, custom permissions at `normal` and `dangerous` levels, `protectionLevel` on a component, exported components, an `android_secret_code` receiver, unused permissions.
+51. Hardcoded credentials to a dev environment endpoint in the `test_url` entry of `strings.xml`.
+52. Manifest issues: `debuggable`, `allowBackup` and `usesCleartextTraffic` all true, custom permissions at `normal` and `dangerous` levels, `protectionLevel` on a component, exported components, an `android_secret_code` receiver, unused permissions.
 
 
 Not covered: hardcoded secrets, which should be valid so they can be confirmed against a live service rather than read from app code; signing certificates in the package, which need a real keystore; and the signature-scheme categories, which need a build targeting API 29 or lower signed with V1 alone.

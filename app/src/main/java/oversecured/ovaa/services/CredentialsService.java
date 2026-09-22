@@ -23,6 +23,9 @@ public class CredentialsService extends Service {
 
         @Override
         public String readFile(String path) {
+            if (path == null) {
+                return null;
+            }
             try {
                 return FileUtils.readFileToString(new File(path), "UTF-8");
             } catch (IOException e) {

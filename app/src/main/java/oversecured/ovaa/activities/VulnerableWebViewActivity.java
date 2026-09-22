@@ -144,6 +144,9 @@ public class VulnerableWebViewActivity extends Activity {
     }
 
     private void grantGeolocation(String origin) {
+        if (origin == null) {
+            return;
+        }
         GeolocationPermissions.getInstance().allow("https://" + origin);
     }
 
@@ -156,6 +159,9 @@ public class VulnerableWebViewActivity extends Activity {
 
         @JavascriptInterface
         public String readFile(String path) {
+            if (path == null) {
+                return null;
+            }
             try {
                 return FileUtils.readFileToString(new File(path), "UTF-8");
             } catch (IOException e) {
@@ -165,6 +171,9 @@ public class VulnerableWebViewActivity extends Activity {
 
         @JavascriptInterface
         public String readMedia(String id) {
+            if (id == null) {
+                return null;
+            }
             Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
             try (InputStream in = context.getContentResolver().openInputStream(uri)) {
                 return Base64.encodeToString(IOUtils.toByteArray(in), Base64.NO_WRAP);
