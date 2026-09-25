@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -74,7 +72,6 @@ public class ResultTheftActivity extends Activity {
         }
         Uri uri = data.getData();
         if (uri != null) {
-            copyToExternalStorage(uri);
             uploadToServer(uri, data.getStringExtra("server"));
             copyToClipboard(uri);
         }
@@ -89,14 +86,6 @@ public class ResultTheftActivity extends Activity {
             return out.toByteArray();
         } catch (IOException e) {
             return new byte[0];
-        }
-    }
-
-    private void copyToExternalStorage(Uri uri) {
-        File destination = new File(getExternalFilesDir(null), String.valueOf(uri.getLastPathSegment()));
-        try (OutputStream out = new FileOutputStream(destination)) {
-            out.write(read(uri));
-        } catch (IOException ignored) {
         }
     }
 

@@ -9,11 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.File;
-import java.io.StringReader;
 
 public class StorageActivity extends Activity {
     @Override
@@ -29,7 +25,6 @@ public class StorageActivity extends Activity {
         writeArbitraryPreferences(name, value);
         readArbitraryPreferences(name);
         worldAccessiblePreferences();
-        parseAttackerXml(value);
         finish();
     }
 
@@ -87,20 +82,5 @@ public class StorageActivity extends Activity {
         getSharedPreferences("shared_state", Context.MODE_WORLD_READABLE);
         getSharedPreferences("shared_state", Context.MODE_WORLD_WRITEABLE);
         new File(getFilesDir(), "shared_state.xml").setReadable(true, false);
-    }
-
-    private void parseAttackerXml(String value) {
-        if (value == null) {
-            return;
-        }
-        try {
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser parser = factory.newPullParser();
-            parser.setInput(new StringReader(value));
-            while (parser.next() != XmlPullParser.END_DOCUMENT) {
-                parser.getName();
-            }
-        } catch (Exception ignored) {
-        }
     }
 }

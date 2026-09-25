@@ -16,7 +16,6 @@ public class VulnReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         deserializeExtras(intent);
-        logAttackerData(intent);
         registerUnprotectedReceiver(context);
         forwardToService(context, intent);
     }
@@ -26,10 +25,6 @@ public class VulnReceiver extends BroadcastReceiver {
         if (payload != null) {
             Log.d(TAG, "restored " + payload);
         }
-    }
-
-    private void logAttackerData(Intent intent) {
-        Log.i(TAG, "broadcast received: " + intent.getStringExtra("message"));
     }
 
     private void registerUnprotectedReceiver(Context context) {

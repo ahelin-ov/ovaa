@@ -3,7 +3,6 @@ package oversecured.ovaa.activities;
 import android.content.Intent;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 
 import org.apache.commons.io.FileUtils;
 
@@ -22,9 +21,7 @@ public class FileAccessActivity extends Activity {
         String outputPath = intent.getStringExtra("output_path");
         String name = intent.getStringExtra("name");
         String data = intent.getStringExtra("data");
-        String token = intent.getStringExtra("token");
 
-        copyToExternalStorage(path);
         copyToControlledDirectory(path, outputPath);
         overwriteControlledPath(outputPath, data);
         corruptFile(outputPath);
@@ -33,20 +30,7 @@ public class FileAccessActivity extends Activity {
         makeWorldWritable(path);
         makeWorldReadableAndWritable(path);
         buildPathFromInput(name);
-        storeSensitiveDataInExternalStorage(token);
-        storeNonMediaInExternalStorage();
         finish();
-    }
-
-    private void copyToExternalStorage(String path) {
-        if (path == null) {
-            return;
-        }
-        try {
-            File destination = new File(Environment.getExternalStorageDirectory(), "stolen.bin");
-            FileUtils.copyFile(new File(path), destination);
-        } catch (IOException ignored) {
-        }
     }
 
     private void copyToControlledDirectory(String path, String outputPath) {
@@ -118,22 +102,6 @@ public class FileAccessActivity extends Activity {
         File file = new File(getFilesDir() + "/profiles/" + name);
         try (InputStream in = new java.io.FileInputStream(file)) {
             in.read(new byte[16]);
-        } catch (IOException ignored) {
-        }
-    }
-
-    private void storeSensitiveDataInExternalStorage(String token) {
-        try {
-            File file = new File(Environment.getExternalStorageDirectory(), "ovaa_session.txt");
-            FileUtils.writeStringToFile(file, "session_token=" + token, "UTF-8");
-        } catch (IOException ignored) {
-        }
-    }
-
-    private void storeNonMediaInExternalStorage() {
-        try {
-            File file = new File(getExternalFilesDir(null), "settings.json");
-            FileUtils.writeStringToFile(file, "{\"debug\":true}", "UTF-8");
         } catch (IOException ignored) {
         }
     }
