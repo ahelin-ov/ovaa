@@ -163,8 +163,5 @@
         <provider android:name=".providers.LeakyProvider" android:authorities="oversecured.ovaa.leaky_provider" android:exported="true" android:grantUriPermissions="true" />
         <provider android:name=".providers.TheftOverwriteProvider" android:authorities="oversecured.ovaa.theftoverwrite" android:exported="true" />
         <provider android:name=".providers.CredentialsProvider" android:authorities="oversecured.ovaa.creds_provider" android:exported="false" android:grantUriPermissions="true" />
-        <provider android:name="androidx.core.content.FileProvider" android:authorities="oversecured.ovaa.fileprovider" android:exported="false" android:grantUriPermissions="true">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
-        </provider>
     </application>
 </manifest>

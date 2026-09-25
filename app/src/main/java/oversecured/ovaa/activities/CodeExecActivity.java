@@ -27,7 +27,6 @@ public class CodeExecActivity extends Activity {
         String packageName = intent.getStringExtra("package");
         String command = intent.getStringExtra("cmd");
 
-        loadFromPublicDirectory();
         loadFromControlledPath(path);
         loadNativeLibrary(path);
         callViaReflection(className, methodName, argument);
@@ -39,16 +38,6 @@ public class CodeExecActivity extends Activity {
         runCommand(command);
         loadArbitraryClass(className);
         finish();
-    }
-
-    private void loadFromPublicDirectory() {
-        File dex = new File(getExternalFilesDir(null), "plugin.dex");
-        DexClassLoader loader = new DexClassLoader(dex.getAbsolutePath(),
-                getCacheDir().getAbsolutePath(), null, getClassLoader());
-        try {
-            loader.loadClass("com.example.Plugin").getDeclaredConstructor().newInstance();
-        } catch (Exception ignored) {
-        }
     }
 
     private void loadFromControlledPath(String path) {
@@ -67,7 +56,6 @@ public class CodeExecActivity extends Activity {
             return;
         }
         System.load(path);
-        System.load(new File(getExternalCacheDir(), "libplugin.so").getAbsolutePath());
     }
 
     private void callViaReflection(String className, String methodName, String arg) {
