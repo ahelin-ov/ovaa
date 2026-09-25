@@ -88,9 +88,6 @@ This section only includes the list of vulnerabilities, without a detailed descr
 47. Hardcoded credentials to a dev environment endpoint in the `test_url` entry of `strings.xml`.
 48. Manifest issues: `debuggable`, `allowBackup` and `usesCleartextTraffic` all true, custom permissions at `normal` and `dangerous` levels, `protectionLevel` on a component, exported components, an `android_secret_code` receiver, unused permissions.
 
-
-Not covered: hardcoded secrets, which should be valid so they can be confirmed against a live service rather than read from app code; signing certificates in the package, which need a real keystore; and the signature-scheme categories, which need a build targeting API 29 or lower signed with V1 alone.
-
 ---------------------------------------
 *Licensed under the Simplified BSD License*
 
